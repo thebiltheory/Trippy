@@ -1,0 +1,46 @@
+<form id="trip-form" class="form-horizontal">
+<fieldset>
+
+<!-- Select Basic -->
+<div class="form-group">
+  <div class="col-md-5">
+    <select id="trip-from" name="selectbasic" class="form-control">
+      <option>From</option>
+      <% cities.forEach(function(city){ %>
+        <option value="<%= city %>"><%= city %></option>
+      <% }); %>
+    </select>
+  </div>
+  <div class="col-md-5">
+    <select id="trip-to" name="selectbasic" class="form-control">
+      <option>To</option>
+      <% cities.forEach(function(city){ %>
+        <option value="<%= city %>"><%= city %></option>
+      <% }); %>
+    </select>
+  </div>
+</div>
+
+<!-- Multiple Radios (inline) -->
+<div class="form-group">
+  <div class="col-md-4">
+    <label class="radio-inline" for="radios-0">
+      <input type="radio" name="radios" id="radios-0" value="1" checked="checked">
+      Cheapest
+    </label>
+    <label class="radio-inline" for="radios-1">
+      <input type="radio" name="radios" id="radios-1" value="2">
+      Fastest
+    </label>
+  </div>
+</div>
+
+<!-- Button -->
+<div class="form-group">
+  <div class="col-md-4">
+    <button id="singlebutton" name="singlebutton" class="btn btn-primary">Let's Go</button>
+  </div>
+</div>
+
+</fieldset>
+</form>

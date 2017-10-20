@@ -13,6 +13,9 @@ module.exports = {
     path: `${__dirname}/docs`,
     filename: 'trippy.js',
   },
+  node: {
+    fs: 'empty',
+  },
   module: {
     loaders: [
       {
@@ -38,6 +41,10 @@ module.exports = {
         },
       },
       {
+        test: /\.ejs?$/,
+        loader: 'ejs-compiled-loader',
+      },
+      {
         test: /\.html$/,
         use: [{
           loader: 'html-loader',
@@ -51,7 +58,7 @@ module.exports = {
         loader: 'file-loader',
         options: {
           name: 'response.json',
-        }
+        },
       },
     ],
   },

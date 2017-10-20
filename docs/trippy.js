@@ -60,47 +60,181 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(1);
-__webpack_require__(7);
-module.exports = __webpack_require__(8);
+"use strict";
 
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/**
+ * @file Set and export helpers
+ * @author thebiltheory
+ */
+
+/** @function applyDiscount */
+var applyDiscount = exports.applyDiscount = function applyDiscount(price, discount) {
+  return price - price * (discount / 100);
+};
+
+/** @function minItem */
+var minItem = exports.minItem = function minItem(array) {
+  for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    args[_key - 1] = arguments[_key];
+  }
+
+  var keys = args.join('.');
+  return array.sort(function (a, b) {
+    return a[keys] - b[keys];
+  })[0];
+};
+
+/** @function groupBy */
+/* Reference for future me
+ * https://www.consolelog.io/group-by-in-javascript
+ */
+var groupBy = exports.groupBy = function groupBy(array, key) {
+  return array.reduce(function (groups, item) {
+    var trip = item[key];
+    groups[trip] = groups[trip] || [];
+    groups[trip].push(item);
+    return groups;
+  }, {});
+};
+
+/** @function toMinutes */
+var toMinutes = exports.toMinutes = function toMinutes(hours, minutes) {
+  return 60 * parseInt(hours, 10) + parseInt(minutes, 10);
+};
+
+/** @function totalSum */
+var totalSum = exports.totalSum = function totalSum(array) {
+  return array.reduce(function (acc, current) {
+    return acc + current;
+  });
+};
+
+/** @function append */
+var append = exports.append = function append(id, element) {
+  var doc = new DOMParser().parseFromString(element, 'text/html');
+  var html = doc.body.firstChild;
+  document.getElementById(id).appendChild(html);
+};
+
+/** @function getValue */
+var getValue = exports.getValue = function getValue(id) {
+  return document.getElementById(id).value;
+};
+
+/** @function listenTo */
+var listenTo = exports.listenTo = function listenTo(id, event, callback) {
+  return document.getElementById(id).addEventListener(event, callback);
+};
 
 /***/ }),
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
+__webpack_require__(2);
+__webpack_require__(9);
+module.exports = __webpack_require__(10);
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 
 
-var _Itinerary = __webpack_require__(2);
+var _Itinerary = __webpack_require__(3);
 
 var _Itinerary2 = _interopRequireDefault(_Itinerary);
 
-var _helpers = __webpack_require__(4);
+var _helpers = __webpack_require__(0);
 
 var _api = __webpack_require__(6);
+
+var _card = __webpack_require__(7);
+
+var _card2 = _interopRequireDefault(_card);
+
+var _form = __webpack_require__(8);
+
+var _form2 = _interopRequireDefault(_form);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var deals = '../response.json';
-var trippy = {
-  init: function init() {
-    // Init destinations
-    // Init UI
-    // Init App
 
-    this.getItinerary('cheapest', 'Stockholm', 'Madrid');
+var trippy = {
+  renderList: function renderList(values) {
+    var _this = this;
+
+    var mode = values.mode,
+        departure = values.departure,
+        arrival = values.arrival;
+
+    this.getItinerary(mode, departure, arrival).then(function (itinerary) {
+      itinerary.forEach(function (card, i) {
+        setTimeout(function () {
+          _this.renderCard(card);
+        }, 100 * i);
+      });
+    });
+  },
+  loadDestinations: function loadDestinations() {
+    var _this2 = this;
+
+    var getCities = (0, _api.trippyGet)(deals);
+    var allCities = [];
+    var cities = [];
+
+    getCities.then(function (dest) {
+      dest.deals.map(function (city) {
+        allCities.push(city.departure);
+        allCities.push(city.arrival);
+      });
+    }).then(function () {
+      // Runs after all cities have been pushed
+      allCities.forEach(function (city) {
+        if (!cities.includes(city)) {
+          cities.push(city);
+        }
+      });
+    }).then(function () {
+      _this2.renderForm({ cities: cities });
+    });
+
+    return { cities: cities };
+  },
+  renderCard: function renderCard(itinerary) {
+    var card = (0, _card2.default)(itinerary);
+    (0, _helpers.append)('board-list', card);
+  },
+  renderForm: function renderForm(data) {
+    var form = (0, _form2.default)(data);
+    (0, _helpers.append)('trip-form', form);
+  },
+  formValues: function formValues() {
+    var formVal = {
+      departure: (0, _helpers.getValue)('trip-from'),
+      arrival: (0, _helpers.getValue)('trip-to'),
+      mode: 'cheapest'
+    };
+
+    return formVal;
   },
   getItinerary: function getItinerary(mode, departure, arrival) {
     var trips = (0, _api.trippyGet)(deals);
-    trips.then(function (cities) {
+
+    return trips.then(function (cities) {
       var currency = cities.currency,
           deals = cities.deals;
 
@@ -110,14 +244,23 @@ var trippy = {
       return route.findRoute(mode, departure, arrival);
     });
   },
-  cheapestItinerary: function cheapestItinerary() {},
-  fastestItinerary: function fastestItinerary() {}
+  init: function init() {
+    var _this3 = this;
+
+    this.loadDestinations();
+    (0, _helpers.listenTo)('trip-form', 'submit', function (e) {
+      e.preventDefault();
+      console.log(_this3.formValues());
+
+      _this3.renderList(_this3.formValues());
+    });
+  }
 };
 
 trippy.init();
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -129,11 +272,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _PriorityQueue = __webpack_require__(3);
+var _PriorityQueue = __webpack_require__(4);
 
 var _PriorityQueue2 = _interopRequireDefault(_PriorityQueue);
 
-var _Sorter = __webpack_require__(13);
+var _Sorter = __webpack_require__(5);
+
+var _helpers = __webpack_require__(0);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -209,7 +354,7 @@ var Itinerary = function () {
         });
       }
 
-      console.table(this.route.reverse());
+      // console.table(this.route.reverse());
       return this.route.reverse();
     }
   }]);
@@ -220,7 +365,7 @@ var Itinerary = function () {
 exports.default = Itinerary;
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -296,7 +441,7 @@ var PriorityQueue = function () {
 exports.default = PriorityQueue;
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -305,50 +450,61 @@ exports.default = PriorityQueue;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-/**
- * @file Set and export helpers
- * @author thebiltheory
- */
+exports.sorter = undefined;
 
-/** @function applyDiscount */
-var applyDiscount = exports.applyDiscount = function applyDiscount(price, discount) {
-  return price - price * (discount / 100);
-};
+var _helpers = __webpack_require__(0);
 
-/** @function minItem */
-var minItem = exports.minItem = function minItem(array, key) {
-  return array.reduce(function (a, b) {
-    return a[key] <= b[key] ? a : b;
-  }, {});
-};
+// export const route = [];
 
-/** @function groupBy */
-/* Reference for future me
- * https://www.consolelog.io/group-by-in-javascript
- */
-var groupBy = exports.groupBy = function groupBy(array, key) {
-  return array.reduce(function (groups, item) {
-    var trip = item[key];
-    groups[trip] = groups[trip] || [];
-    groups[trip].push(item);
-    return groups;
-  }, {});
-};
+var shortestRoute = function shortestRoute(previousSmallest, smallest) {
+  return previousSmallest.filter(function (dest) {
+    if (dest.arrival === smallest) {
+      var cost = dest.cost,
+          discount = dest.discount;
+      var _dest$duration = dest.duration,
+          hours = _dest$duration.h,
+          minutes = _dest$duration.m;
 
-/** @function toMinutes */
-var toMinutes = exports.toMinutes = function toMinutes(hours, minutes) {
-  return 60 * parseInt(hours, 10) + parseInt(minutes, 10);
-};
-
-/** @function totalSum */
-var totalSum = exports.totalSum = function totalSum(array) {
-  return array.reduce(function (acc, current) {
-    return acc + current;
+      return Object.assign(dest, {
+        cost: discount ? (0, _helpers.applyDiscount)(cost, discount) : cost,
+        initialPrice: cost,
+        duration: {
+          h: hours,
+          m: minutes,
+          total: (0, _helpers.toMinutes)(hours, minutes)
+        }
+      });
+    }
+    return false;
   });
 };
 
+var sorter = exports.sorter = function sorter(mode, previous, smallest) {
+  var stops = shortestRoute(previous, smallest);
+
+  var stop = {};
+  switch (mode) {
+    case 'cheapest':
+      {
+        stop = (0, _helpers.minItem)(stops, 'cost');
+        break;
+      }
+    case 'fastest':
+      {
+        // stop = minItem(stops, 'duration', 'total');
+        stop = (0, _helpers.minItem)(stops, 'duration');
+        break;
+      }
+    default:
+      {
+        stop = (0, _helpers.minItem)(stops, 'cost');
+      }
+  }
+
+  return stop;
+};
+
 /***/ }),
-/* 5 */,
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -384,86 +540,106 @@ var trippyGet = exports.trippyGet = function trippyGet(endpoint) {
 /* 7 */
 /***/ (function(module, exports) {
 
-// removed by extract-text-webpack-plugin
+module.exports = function anonymous(locals, filters, escape, rethrow) {
+    escape = escape || function(html) {
+        return String(html).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+    };
+    var __stack = {
+        lineno: 1,
+        input: '<li class="board-card" data-ref="<%= reference %>">\n  <div class="header-card">\n    <div class="departure">\n      <h4><%= departure %></h4>\n    </div>\n    <div class="from-to-icon">\n\n      <% if (transport === \'train\') { %>\n        <i class="ion-android-train"></i>\n        <% } else{ %>\n          <i class="ion-android-bus"></i>\n        <% } %>\n\n        <div class="dots"></div>\n\n    </div>\n    <div class="arrival">\n      <h4><%= arrival %></h4>\n    </div>\n  </div>\n  <div class="footer-card">\n    <div class="reference">\n      <span>Reference</span>\n      <%= reference %>\n    </div>\n\n    <div class="transport">\n      <span>Transport</span>\n      <%= transport %>\n    </div>\n\n    <div class="duration">\n      <span>Duration</span>\n      <%= duration.h %>H<%= duration.m %>\n    </div>\n\n\n    <div class="reference">\n      <span>Reference</span>\n      <%= reference %>\n    </div>\n\n    <div class="cost">\n      <span>Cost</span>\n      <%= cost %>\n    </div>\n\n  </div>\n</li>\n',
+        filename: "."
+    };
+    function rethrow(err, str, filename, lineno) {
+        var lines = str.split("\n"), start = Math.max(lineno - 3, 0), end = Math.min(lines.length, lineno + 3);
+        var context = lines.slice(start, end).map(function(line, i) {
+            var curr = i + start + 1;
+            return (curr == lineno ? " >> " : "    ") + curr + "| " + line;
+        }).join("\n");
+        err.path = filename;
+        err.message = (filename || "ejs") + ":" + lineno + "\n" + context + "\n\n" + err.message;
+        throw err;
+    }
+    try {
+        var buf = [];
+        with (locals || {}) {
+            (function() {
+                buf.push('<li class="board-card" data-ref="', escape((__stack.lineno = 1, reference)), '">\n  <div class="header-card">\n    <div class="departure">\n      <h4>', escape((__stack.lineno = 4, departure)), '</h4>\n    </div>\n    <div class="from-to-icon">\n\n      ');
+                __stack.lineno = 8;
+                if (transport === "train") {
+                    buf.push('\n        <i class="ion-android-train"></i>\n        ');
+                    __stack.lineno = 10;
+                } else {
+                    buf.push('\n          <i class="ion-android-bus"></i>\n        ');
+                    __stack.lineno = 12;
+                }
+                buf.push('\n\n        <div class="dots"></div>\n\n    </div>\n    <div class="arrival">\n      <h4>', escape((__stack.lineno = 18, arrival)), '</h4>\n    </div>\n  </div>\n  <div class="footer-card">\n    <div class="reference">\n      <span>Reference</span>\n      ', escape((__stack.lineno = 24, reference)), '\n    </div>\n\n    <div class="transport">\n      <span>Transport</span>\n      ', escape((__stack.lineno = 29, transport)), '\n    </div>\n\n    <div class="duration">\n      <span>Duration</span>\n      ', escape((__stack.lineno = 34, duration.h)), "H", escape((__stack.lineno = 34, duration.m)), '\n    </div>\n\n\n    <div class="reference">\n      <span>Reference</span>\n      ', escape((__stack.lineno = 40, reference)), '\n    </div>\n\n    <div class="cost">\n      <span>Cost</span>\n      ', escape((__stack.lineno = 45, cost)), "\n    </div>\n\n  </div>\n</li>\n");
+            })();
+        }
+        return buf.join("");
+    } catch (err) {
+        rethrow(err, __stack.input, __stack.filename, __stack.lineno);
+    }
+}
 
 /***/ }),
 /* 8 */
 /***/ (function(module, exports) {
 
-module.exports = "<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <!-- <link rel=\"stylesheet\" href=\"./css/trippy.css\"> -->\n  <title>Trippy</title>\n</head>\n<body>\n\n  <h1>trippy</h1>\n  <h3>Trip sorter</h3>\n  <h3>Trip sorter</h3>\n  <h3>Trip sorter</h3>\n  <h3>Trip sorter</h3>\n  <h3>Trip sorter</h3>\n  <h3>Trip sorter</h3>\n\n<!-- <script src=\"./js/trippy.js\" type=\"text/javascript\"></script> -->\n<script id=\"__bs_script__\">//<![CDATA[\n    document.write(\"<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.18.13'><\\/script>\".replace(\"HOST\", location.hostname));\n//]]></script>\n</body>\n</html>\n";
+module.exports = function anonymous(locals, filters, escape, rethrow) {
+    escape = escape || function(html) {
+        return String(html).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+    };
+    var __stack = {
+        lineno: 1,
+        input: '<form id="trip-form" class="form-horizontal">\n<fieldset>\n\n<!-- Select Basic -->\n<div class="form-group">\n  <div class="col-md-5">\n    <select id="trip-from" name="selectbasic" class="form-control">\n      <option>From</option>\n      <% cities.forEach(function(city){ %>\n        <option value="<%= city %>"><%= city %></option>\n      <% }); %>\n    </select>\n  </div>\n  <div class="col-md-5">\n    <select id="trip-to" name="selectbasic" class="form-control">\n      <option>To</option>\n      <% cities.forEach(function(city){ %>\n        <option value="<%= city %>"><%= city %></option>\n      <% }); %>\n    </select>\n  </div>\n</div>\n\n<!-- Multiple Radios (inline) -->\n<div class="form-group">\n  <div class="col-md-4">\n    <label class="radio-inline" for="radios-0">\n      <input type="radio" name="radios" id="radios-0" value="1" checked="checked">\n      Cheapest\n    </label>\n    <label class="radio-inline" for="radios-1">\n      <input type="radio" name="radios" id="radios-1" value="2">\n      Fastest\n    </label>\n  </div>\n</div>\n\n<!-- Button -->\n<div class="form-group">\n  <div class="col-md-4">\n    <button id="singlebutton" name="singlebutton" class="btn btn-primary">Let\'s Go</button>\n  </div>\n</div>\n\n</fieldset>\n</form>\n',
+        filename: "."
+    };
+    function rethrow(err, str, filename, lineno) {
+        var lines = str.split("\n"), start = Math.max(lineno - 3, 0), end = Math.min(lines.length, lineno + 3);
+        var context = lines.slice(start, end).map(function(line, i) {
+            var curr = i + start + 1;
+            return (curr == lineno ? " >> " : "    ") + curr + "| " + line;
+        }).join("\n");
+        err.path = filename;
+        err.message = (filename || "ejs") + ":" + lineno + "\n" + context + "\n\n" + err.message;
+        throw err;
+    }
+    try {
+        var buf = [];
+        with (locals || {}) {
+            (function() {
+                buf.push('<form id="trip-form" class="form-horizontal">\n<fieldset>\n\n<!-- Select Basic -->\n<div class="form-group">\n  <div class="col-md-5">\n    <select id="trip-from" name="selectbasic" class="form-control">\n      <option>From</option>\n      ');
+                __stack.lineno = 9;
+                cities.forEach(function(city) {
+                    buf.push('\n        <option value="', escape((__stack.lineno = 10, city)), '">', escape((__stack.lineno = 10, city)), "</option>\n      ");
+                    __stack.lineno = 11;
+                });
+                buf.push('\n    </select>\n  </div>\n  <div class="col-md-5">\n    <select id="trip-to" name="selectbasic" class="form-control">\n      <option>To</option>\n      ');
+                __stack.lineno = 17;
+                cities.forEach(function(city) {
+                    buf.push('\n        <option value="', escape((__stack.lineno = 18, city)), '">', escape((__stack.lineno = 18, city)), "</option>\n      ");
+                    __stack.lineno = 19;
+                });
+                buf.push('\n    </select>\n  </div>\n</div>\n\n<!-- Multiple Radios (inline) -->\n<div class="form-group">\n  <div class="col-md-4">\n    <label class="radio-inline" for="radios-0">\n      <input type="radio" name="radios" id="radios-0" value="1" checked="checked">\n      Cheapest\n    </label>\n    <label class="radio-inline" for="radios-1">\n      <input type="radio" name="radios" id="radios-1" value="2">\n      Fastest\n    </label>\n  </div>\n</div>\n\n<!-- Button -->\n<div class="form-group">\n  <div class="col-md-4">\n    <button id="singlebutton" name="singlebutton" class="btn btn-primary">Let\'s Go</button>\n  </div>\n</div>\n\n</fieldset>\n</form>\n');
+            })();
+        }
+        return buf.join("");
+    } catch (err) {
+        rethrow(err, __stack.input, __stack.filename, __stack.lineno);
+    }
+}
 
 /***/ }),
-/* 9 */,
-/* 10 */,
-/* 11 */,
-/* 12 */,
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 9 */
+/***/ (function(module, exports) {
 
-"use strict";
+// removed by extract-text-webpack-plugin
 
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.test = exports.sorter = undefined;
-
-var _helpers = __webpack_require__(4);
-
-// export const route = [];
-
-var shortestRoute = function shortestRoute(previousSmallest, smallest) {
-  return previousSmallest.filter(function (dest) {
-    if (dest.arrival === smallest) {
-      var cost = dest.cost,
-          discount = dest.discount;
-      var _dest$duration = dest.duration,
-          hours = _dest$duration.h,
-          minutes = _dest$duration.m;
-
-      // console.log(hours, minutes);
-
-      return Object.assign(dest, {
-        cost: discount ? (0, _helpers.applyDiscount)(cost, discount) : cost,
-        initialPrice: cost,
-        duration: {
-          h: hours,
-          m: minutes,
-          total: (0, _helpers.toMinutes)(hours, minutes)
-        }
-      });
-    }
-    return false;
-  });
-};
-
-var sorter = exports.sorter = function sorter(mode, previous, smallest) {
-  var stops = shortestRoute(previous, smallest);
-
-  var stop = {};
-  switch (mode) {
-    case 'cheapest':
-      {
-        stop = (0, _helpers.minItem)(stops, 'cost');
-        break;
-      }
-    case 'fastest':
-      {
-        stop = (0, _helpers.minItem)(stops, 'duration', 'total');
-        break;
-      }
-    default:
-      {
-        stop = (0, _helpers.minItem)(stops, 'cost');
-      }
-  }
-
-  return stop;
-};
-
-var test = exports.test = function test(a) {
-  return a;
-};
+module.exports = "<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <link rel=\"stylesheet\" href=\"http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css\">\n  <link href=\"https://fonts.googleapis.com/css?family=Montserrat:400,500,700\" rel=\"stylesheet\">\n  <link rel=\"stylesheet\"\n  href=\"https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css\">\n  <!-- <link rel=\"stylesheet\" href=\"./css/trippy.css\"> -->\n  <title>Trippy</title>\n</head>\n<body>\n\n<div id=\"trippy-app\">\n  <div id=\"trip-form\"></div>\n  <ul id=\"board-list\"></ul>\n</div>\n\n<!-- <script src=\"./js/trippy.js\" type=\"text/javascript\"></script> -->\n<script id=\"__bs_script__\">//<![CDATA[\n    document.write(\"<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.18.13'><\\/script>\".replace(\"HOST\", location.hostname));\n//]]></script>\n</body>\n</html>\n";
 
 /***/ })
 /******/ ]);

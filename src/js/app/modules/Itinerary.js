@@ -1,5 +1,6 @@
 import PriorityQueue from './PriorityQueue';
 import { sorter } from './Sorter';
+import { totalSum } from '../utils/helpers';
 
 /**
  * Creates a new Itinerary (path)
@@ -65,7 +66,7 @@ export default class Itinerary {
       });
     }
 
-    console.table(this.route.reverse());
+    // console.table(this.route.reverse());
     return this.route.reverse();
   }
 }

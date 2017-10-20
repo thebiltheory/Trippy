@@ -7,9 +7,6 @@ const shortestRoute = (previousSmallest, smallest) => {
     if (dest.arrival === smallest) {
       const { cost, discount } = dest;
       const { h: hours, m: minutes } = dest.duration;
-
-      // console.log(hours, minutes);
-
       return Object.assign(dest, {
         cost: discount ? applyDiscount(cost, discount) : cost,
         initialPrice: cost,
@@ -34,7 +31,8 @@ export const sorter = (mode, previous, smallest) => {
       break;
     }
     case 'fastest': {
-      stop = minItem(stops, 'duration', 'total');
+      // stop = minItem(stops, 'duration', 'total');
+      stop = minItem(stops, 'duration');
       break;
     }
     default: {
@@ -44,5 +42,3 @@ export const sorter = (mode, previous, smallest) => {
 
   return stop;
 };
-
-export const test = a => a;
