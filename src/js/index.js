@@ -1,5 +1,5 @@
 import Itinerary from './app/modules/Itinerary';
-import { groupBy, append, getValue, listenTo } from './app/utils/helpers';
+import { groupBy, append, getValue, listenTo, resetHtml, docReady, getRadioValue } from './app/utils/helpers';
 import { trippyGet } from './app/api/api';
 import Card from './app/components/card.ejs';
 import Form from './app/components/form.ejs';
@@ -60,7 +60,7 @@ const trippy = {
     const formVal = {
       departure: getValue('trip-from'),
       arrival: getValue('trip-to'),
-      mode: 'cheapest',
+      mode: getRadioValue('trip-mode'),
     };
 
     return formVal;
@@ -80,14 +80,15 @@ const trippy = {
 
   init() {
     this.loadDestinations();
+
     listenTo('trip-form', 'submit', (e) => {
       e.preventDefault();
-      console.log(this.formValues());
-
+      resetHtml('board-list');
       this.renderList(this.formValues());
-    })
+    });
   },
-
 };
 
-trippy.init();
+docReady(() => {
+  trippy.init();
+});

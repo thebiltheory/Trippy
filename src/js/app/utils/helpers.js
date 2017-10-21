@@ -46,10 +46,32 @@ export const append = (id, element) => {
 
 /** @function getValue */
 export const getValue = (id) => {
-  return document.getElementById(id).value
+  return document.getElementById(id).value;
+};
+
+/** @function getRadioValue */
+export const getRadioValue = (name) => {
+  const radios = [...document.getElementsByName(name)];
+  let mode = null;
+  for (let i = 0; i < radios.length; i += 1) {
+    if (radios[i].checked) {
+      mode = radios[i].value;
+      return mode;
+    }
+  }
 };
 
 /** @function listenTo */
 export const listenTo = (id, event, callback) => {
   return document.getElementById(id).addEventListener(event, callback);
+};
+
+/** @function resetHtml */
+export const resetHtml = (id) => {
+  document.getElementById(id).innerHTML = '';
+}
+
+/** @function docReady */
+export const docReady = (initFn) => {
+  document.addEventListener('DOMContentLoaded', initFn);
 };

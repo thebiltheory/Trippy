@@ -73,6 +73,9 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 /**
  * @file Set and export helpers
  * @author thebiltheory
@@ -132,9 +135,31 @@ var getValue = exports.getValue = function getValue(id) {
   return document.getElementById(id).value;
 };
 
+/** @function getRadioValue */
+var getRadioValue = exports.getRadioValue = function getRadioValue(name) {
+  var radios = [].concat(_toConsumableArray(document.getElementsByName(name)));
+  var mode = null;
+  for (var i = 0; i < radios.length; i += 1) {
+    if (radios[i].checked) {
+      mode = radios[i].value;
+      return mode;
+    }
+  }
+};
+
 /** @function listenTo */
 var listenTo = exports.listenTo = function listenTo(id, event, callback) {
   return document.getElementById(id).addEventListener(event, callback);
+};
+
+/** @function resetHtml */
+var resetHtml = exports.resetHtml = function resetHtml(id) {
+  document.getElementById(id).innerHTML = '';
+};
+
+/** @function docReady */
+var docReady = exports.docReady = function docReady(initFn) {
+  document.addEventListener('DOMContentLoaded', initFn);
 };
 
 /***/ }),
@@ -226,7 +251,7 @@ var trippy = {
     var formVal = {
       departure: (0, _helpers.getValue)('trip-from'),
       arrival: (0, _helpers.getValue)('trip-to'),
-      mode: 'cheapest'
+      mode: (0, _helpers.getRadioValue)('trip-mode')
     };
 
     return formVal;
@@ -248,16 +273,18 @@ var trippy = {
     var _this3 = this;
 
     this.loadDestinations();
+
     (0, _helpers.listenTo)('trip-form', 'submit', function (e) {
       e.preventDefault();
-      console.log(_this3.formValues());
-
+      (0, _helpers.resetHtml)('board-list');
       _this3.renderList(_this3.formValues());
     });
   }
 };
 
-trippy.init();
+(0, _helpers.docReady)(function () {
+  trippy.init();
+});
 
 /***/ }),
 /* 3 */
@@ -546,7 +573,7 @@ module.exports = function anonymous(locals, filters, escape, rethrow) {
     };
     var __stack = {
         lineno: 1,
-        input: '<li class="board-card" data-ref="<%= reference %>">\n  <div class="header-card">\n    <div class="departure">\n      <h4><%= departure %></h4>\n    </div>\n    <div class="from-to-icon">\n\n      <% if (transport === \'train\') { %>\n        <i class="ion-android-train"></i>\n        <% } else{ %>\n          <i class="ion-android-bus"></i>\n        <% } %>\n\n        <div class="dots"></div>\n\n    </div>\n    <div class="arrival">\n      <h4><%= arrival %></h4>\n    </div>\n  </div>\n  <div class="footer-card">\n    <div class="reference">\n      <span>Reference</span>\n      <%= reference %>\n    </div>\n\n    <div class="transport">\n      <span>Transport</span>\n      <%= transport %>\n    </div>\n\n    <div class="duration">\n      <span>Duration</span>\n      <%= duration.h %>H<%= duration.m %>\n    </div>\n\n\n    <div class="reference">\n      <span>Reference</span>\n      <%= reference %>\n    </div>\n\n    <div class="cost">\n      <span>Cost</span>\n      <%= cost %>\n    </div>\n\n  </div>\n</li>\n',
+        input: '<li class="board-card" data-ref="<%= reference %>">\n  <div class="header-card">\n    <div class="departure">\n      <h4><%= departure %></h4>\n    </div>\n    <div class="from-to-icon">\n\n      <% if (transport === \'train\') { %>\n        <i class="ion-android-train"></i>\n        <% } else{ %>\n          <i class="ion-android-bus"></i>\n        <% } %>\n\n        <div class="dots"></div>\n\n    </div>\n    <div class="arrival">\n      <h4><%= arrival %></h4>\n    </div>\n  </div>\n  <div class="footer-card">\n    <div class="reference">\n      <span>Reference</span>\n      <%= reference %>\n    </div>\n\n    <div class="transport">\n      <span>Transport</span>\n      <%= transport %>\n    </div>\n\n    <div class="duration">\n      <span>Duration</span>\n      <%= duration.h %>H<%= duration.m %>\n    </div>\n\n    <div class="cost">\n      <span>Cost</span>\n      <%= cost %>\n    </div>\n\n  </div>\n</li>\n',
         filename: "."
     };
     function rethrow(err, str, filename, lineno) {
@@ -572,7 +599,7 @@ module.exports = function anonymous(locals, filters, escape, rethrow) {
                     buf.push('\n          <i class="ion-android-bus"></i>\n        ');
                     __stack.lineno = 12;
                 }
-                buf.push('\n\n        <div class="dots"></div>\n\n    </div>\n    <div class="arrival">\n      <h4>', escape((__stack.lineno = 18, arrival)), '</h4>\n    </div>\n  </div>\n  <div class="footer-card">\n    <div class="reference">\n      <span>Reference</span>\n      ', escape((__stack.lineno = 24, reference)), '\n    </div>\n\n    <div class="transport">\n      <span>Transport</span>\n      ', escape((__stack.lineno = 29, transport)), '\n    </div>\n\n    <div class="duration">\n      <span>Duration</span>\n      ', escape((__stack.lineno = 34, duration.h)), "H", escape((__stack.lineno = 34, duration.m)), '\n    </div>\n\n\n    <div class="reference">\n      <span>Reference</span>\n      ', escape((__stack.lineno = 40, reference)), '\n    </div>\n\n    <div class="cost">\n      <span>Cost</span>\n      ', escape((__stack.lineno = 45, cost)), "\n    </div>\n\n  </div>\n</li>\n");
+                buf.push('\n\n        <div class="dots"></div>\n\n    </div>\n    <div class="arrival">\n      <h4>', escape((__stack.lineno = 18, arrival)), '</h4>\n    </div>\n  </div>\n  <div class="footer-card">\n    <div class="reference">\n      <span>Reference</span>\n      ', escape((__stack.lineno = 24, reference)), '\n    </div>\n\n    <div class="transport">\n      <span>Transport</span>\n      ', escape((__stack.lineno = 29, transport)), '\n    </div>\n\n    <div class="duration">\n      <span>Duration</span>\n      ', escape((__stack.lineno = 34, duration.h)), "H", escape((__stack.lineno = 34, duration.m)), '\n    </div>\n\n    <div class="cost">\n      <span>Cost</span>\n      ', escape((__stack.lineno = 39, cost)), "\n    </div>\n\n  </div>\n</li>\n");
             })();
         }
         return buf.join("");
@@ -591,7 +618,7 @@ module.exports = function anonymous(locals, filters, escape, rethrow) {
     };
     var __stack = {
         lineno: 1,
-        input: '<form id="trip-form" class="form-horizontal">\n<fieldset>\n\n<!-- Select Basic -->\n<div class="form-group">\n  <div class="col-md-5">\n    <select id="trip-from" name="selectbasic" class="form-control">\n      <option>From</option>\n      <% cities.forEach(function(city){ %>\n        <option value="<%= city %>"><%= city %></option>\n      <% }); %>\n    </select>\n  </div>\n  <div class="col-md-5">\n    <select id="trip-to" name="selectbasic" class="form-control">\n      <option>To</option>\n      <% cities.forEach(function(city){ %>\n        <option value="<%= city %>"><%= city %></option>\n      <% }); %>\n    </select>\n  </div>\n</div>\n\n<!-- Multiple Radios (inline) -->\n<div class="form-group">\n  <div class="col-md-4">\n    <label class="radio-inline" for="radios-0">\n      <input type="radio" name="radios" id="radios-0" value="1" checked="checked">\n      Cheapest\n    </label>\n    <label class="radio-inline" for="radios-1">\n      <input type="radio" name="radios" id="radios-1" value="2">\n      Fastest\n    </label>\n  </div>\n</div>\n\n<!-- Button -->\n<div class="form-group">\n  <div class="col-md-4">\n    <button id="singlebutton" name="singlebutton" class="btn btn-primary">Let\'s Go</button>\n  </div>\n</div>\n\n</fieldset>\n</form>\n',
+        input: '<form id="trip-form" class="form-horizontal">\n<fieldset>\n\n<!-- Select Basic -->\n<div class="form-group">\n  <div class="col-md-5">\n    <select id="trip-from" name="selectbasic" class="form-control">\n      <option>From</option>\n      <% cities.forEach(function(city){ %>\n        <option value="<%= city %>"><%= city %></option>\n      <% }); %>\n    </select>\n  </div>\n  <div class="col-md-5">\n    <select id="trip-to" name="selectbasic" class="form-control">\n      <option>To</option>\n      <% cities.forEach(function(city){ %>\n        <option value="<%= city %>"><%= city %></option>\n      <% }); %>\n    </select>\n  </div>\n</div>\n\n<!-- Multiple Radios (inline) -->\n<div class="form-group" id="trip-mode">\n  <label class="radio-inline" for="cheapest">\n    <input type="radio" name="trip-mode" id="cheapest" value="cheapest" checked>\n    Cheapest\n  </label>\n  <label class="radio-inline" for="fastest">\n    <input type="radio" name="trip-mode" id="fastest" value="fastest">\n    Fastest\n  </label>\n</div>\n\n<!-- Button -->\n<div class="form-group">\n  <div class="col-md-4">\n    <button id="singlebutton" name="singlebutton" class="btn btn-primary">Let\'s Go</button>\n  </div>\n</div>\n\n</fieldset>\n</form>\n',
         filename: "."
     };
     function rethrow(err, str, filename, lineno) {
@@ -620,7 +647,7 @@ module.exports = function anonymous(locals, filters, escape, rethrow) {
                     buf.push('\n        <option value="', escape((__stack.lineno = 18, city)), '">', escape((__stack.lineno = 18, city)), "</option>\n      ");
                     __stack.lineno = 19;
                 });
-                buf.push('\n    </select>\n  </div>\n</div>\n\n<!-- Multiple Radios (inline) -->\n<div class="form-group">\n  <div class="col-md-4">\n    <label class="radio-inline" for="radios-0">\n      <input type="radio" name="radios" id="radios-0" value="1" checked="checked">\n      Cheapest\n    </label>\n    <label class="radio-inline" for="radios-1">\n      <input type="radio" name="radios" id="radios-1" value="2">\n      Fastest\n    </label>\n  </div>\n</div>\n\n<!-- Button -->\n<div class="form-group">\n  <div class="col-md-4">\n    <button id="singlebutton" name="singlebutton" class="btn btn-primary">Let\'s Go</button>\n  </div>\n</div>\n\n</fieldset>\n</form>\n');
+                buf.push('\n    </select>\n  </div>\n</div>\n\n<!-- Multiple Radios (inline) -->\n<div class="form-group" id="trip-mode">\n  <label class="radio-inline" for="cheapest">\n    <input type="radio" name="trip-mode" id="cheapest" value="cheapest" checked>\n    Cheapest\n  </label>\n  <label class="radio-inline" for="fastest">\n    <input type="radio" name="trip-mode" id="fastest" value="fastest">\n    Fastest\n  </label>\n</div>\n\n<!-- Button -->\n<div class="form-group">\n  <div class="col-md-4">\n    <button id="singlebutton" name="singlebutton" class="btn btn-primary">Let\'s Go</button>\n  </div>\n</div>\n\n</fieldset>\n</form>\n');
             })();
         }
         return buf.join("");
@@ -639,7 +666,7 @@ module.exports = function anonymous(locals, filters, escape, rethrow) {
 /* 10 */
 /***/ (function(module, exports) {
 
-module.exports = "<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <link rel=\"stylesheet\" href=\"http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css\">\n  <link href=\"https://fonts.googleapis.com/css?family=Montserrat:400,500,700\" rel=\"stylesheet\">\n  <link rel=\"stylesheet\"\n  href=\"https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css\">\n  <!-- <link rel=\"stylesheet\" href=\"./css/trippy.css\"> -->\n  <title>Trippy</title>\n</head>\n<body>\n\n<div id=\"trippy-app\">\n  <div id=\"trip-form\"></div>\n  <ul id=\"board-list\"></ul>\n</div>\n\n<!-- <script src=\"./js/trippy.js\" type=\"text/javascript\"></script> -->\n<script id=\"__bs_script__\">//<![CDATA[\n    document.write(\"<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.18.13'><\\/script>\".replace(\"HOST\", location.hostname));\n//]]></script>\n</body>\n</html>\n";
+module.exports = "<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <!-- <link rel=\"stylesheet\" href=\"http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css\"> -->\n  <!-- <link href=\"https://fonts.googleapis.com/css?family=Montserrat:400,500,700\" rel=\"stylesheet\"> -->\n  <!-- <link rel=\"stylesheet\" href=\"./css/trippy.css\"> -->\n  <title>Trippy</title>\n</head>\n<body>\n\n<div id=\"trippy-app\">\n  <div id=\"trip-form\"></div>\n  <ul id=\"board-list\"></ul>\n</div>\n\n<!-- <script src=\"./js/trippy.js\" type=\"text/javascript\"></script> -->\n<script id=\"__bs_script__\">//<![CDATA[\n    document.write(\"<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.18.13'><\\/script>\".replace(\"HOST\", location.hostname));\n//]]></script>\n</body>\n</html>\n";
 
 /***/ })
 /******/ ]);
