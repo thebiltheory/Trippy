@@ -1,22 +1,36 @@
 import Itinerary from './app/modules/Itinerary';
-import { groupBy, append, getValue, listenTo, resetHtml, docReady, getRadioValue } from './app/utils/helpers';
+import { groupBy, append, getValue, listenTo, resetHtml, docReady, getRadioValue, totalSum } from './app/utils/helpers';
 import { trippyGet } from './app/api/api';
 import Card from './app/components/card.ejs';
 import Form from './app/components/form.ejs';
+import Oops from './app/components/oops.ejs';
 
 const deals = '../response.json';
 
 const trippy = {
   renderList(values) {
     const { mode, departure, arrival } = values;
-    this.getItinerary(mode, departure, arrival)
-      .then((itinerary) => {
-        itinerary.forEach((card, i) => {
-          setTimeout(() => {
-            this.renderCard(card);
-          }, 100 * i);
+
+    if (departure === arrival) {
+      const oops = Oops();
+      append('board-list', oops);
+    } else {
+      this.getItinerary(mode, departure, arrival)
+        .then((itinerary) => {
+          itinerary.forEach((card, i) => {
+            setTimeout(() => {
+              console.log(itinerary);
+              this.renderCard(card);
+            }, 100 * i);
+          });
+
+          const v = itinerary.reduce((a, b) => {
+            console.log(a.cost + b.cost);
+          });
+          console.log(v);
         });
-      });
+    }
+
   },
 
   loadDestinations() {
@@ -53,7 +67,7 @@ const trippy = {
 
   renderForm(data) {
     const form = Form(data);
-    append('trip-form', form);
+    append('trip-form-wrapper', form);
   },
 
   formValues() {
@@ -78,14 +92,28 @@ const trippy = {
     });
   },
 
-  init() {
-    this.loadDestinations();
+  watchForm() {
+    listenTo('trip-form-wrapper', 'change', (e) => {
+      e.preventDefault();
+      const { departure, arrival } = this.formValues();
 
-    listenTo('trip-form', 'submit', (e) => {
+      if (departure && arrival !== '') {
+        document.getElementById('trip-button').disabled = false;
+      } else if ((!departure && arrival) || (departure && !arrival)) {
+        document.getElementById('trip-button').disabled = true;
+      }
+    });
+
+    listenTo('trip-form-wrapper', 'submit', (e) => {
       e.preventDefault();
       resetHtml('board-list');
       this.renderList(this.formValues());
     });
+  },
+
+  init() {
+    this.loadDestinations();
+    this.watchForm();
   },
 };
 

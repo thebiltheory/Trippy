@@ -194,6 +194,10 @@ var _form = __webpack_require__(8);
 
 var _form2 = _interopRequireDefault(_form);
 
+var _oops = __webpack_require__(15);
+
+var _oops2 = _interopRequireDefault(_oops);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var deals = '../response.json';
@@ -206,13 +210,25 @@ var trippy = {
         departure = values.departure,
         arrival = values.arrival;
 
-    this.getItinerary(mode, departure, arrival).then(function (itinerary) {
-      itinerary.forEach(function (card, i) {
-        setTimeout(function () {
-          _this.renderCard(card);
-        }, 100 * i);
+
+    if (departure === arrival) {
+      var oops = (0, _oops2.default)();
+      (0, _helpers.append)('board-list', oops);
+    } else {
+      this.getItinerary(mode, departure, arrival).then(function (itinerary) {
+        itinerary.forEach(function (card, i) {
+          setTimeout(function () {
+            console.log(itinerary);
+            _this.renderCard(card);
+          }, 100 * i);
+        });
+
+        var v = itinerary.reduce(function (a, b) {
+          console.log(a.cost + b.cost);
+        });
+        console.log(v);
       });
-    });
+    }
   },
   loadDestinations: function loadDestinations() {
     var _this2 = this;
@@ -245,7 +261,7 @@ var trippy = {
   },
   renderForm: function renderForm(data) {
     var form = (0, _form2.default)(data);
-    (0, _helpers.append)('trip-form', form);
+    (0, _helpers.append)('trip-form-wrapper', form);
   },
   formValues: function formValues() {
     var formVal = {
@@ -269,16 +285,32 @@ var trippy = {
       return route.findRoute(mode, departure, arrival);
     });
   },
-  init: function init() {
+  watchForm: function watchForm() {
     var _this3 = this;
 
-    this.loadDestinations();
+    (0, _helpers.listenTo)('trip-form-wrapper', 'change', function (e) {
+      e.preventDefault();
 
-    (0, _helpers.listenTo)('trip-form', 'submit', function (e) {
+      var _formValues = _this3.formValues(),
+          departure = _formValues.departure,
+          arrival = _formValues.arrival;
+
+      if (departure && arrival !== '') {
+        document.getElementById('trip-button').disabled = false;
+      } else if (!departure && arrival || departure && !arrival) {
+        document.getElementById('trip-button').disabled = true;
+      }
+    });
+
+    (0, _helpers.listenTo)('trip-form-wrapper', 'submit', function (e) {
       e.preventDefault();
       (0, _helpers.resetHtml)('board-list');
       _this3.renderList(_this3.formValues());
     });
+  },
+  init: function init() {
+    this.loadDestinations();
+    this.watchForm();
   }
 };
 
@@ -618,7 +650,7 @@ module.exports = function anonymous(locals, filters, escape, rethrow) {
     };
     var __stack = {
         lineno: 1,
-        input: '<form id="trip-form" class="form-horizontal">\n<fieldset>\n\n<!-- Select Basic -->\n<div class="form-group">\n  <div class="col-md-5">\n    <select id="trip-from" name="selectbasic" class="form-control">\n      <option>From</option>\n      <% cities.forEach(function(city){ %>\n        <option value="<%= city %>"><%= city %></option>\n      <% }); %>\n    </select>\n  </div>\n  <div class="col-md-5">\n    <select id="trip-to" name="selectbasic" class="form-control">\n      <option>To</option>\n      <% cities.forEach(function(city){ %>\n        <option value="<%= city %>"><%= city %></option>\n      <% }); %>\n    </select>\n  </div>\n</div>\n\n<!-- Multiple Radios (inline) -->\n<div class="form-group" id="trip-mode">\n  <label class="radio-inline" for="cheapest">\n    <input type="radio" name="trip-mode" id="cheapest" value="cheapest" checked>\n    Cheapest\n  </label>\n  <label class="radio-inline" for="fastest">\n    <input type="radio" name="trip-mode" id="fastest" value="fastest">\n    Fastest\n  </label>\n</div>\n\n<!-- Button -->\n<div class="form-group">\n  <div class="col-md-4">\n    <button id="singlebutton" name="singlebutton" class="btn btn-primary">Let\'s Go</button>\n  </div>\n</div>\n\n</fieldset>\n</form>\n',
+        input: '<form id="trip-form" class="form-horizontal">\n<!-- Select Basic -->\n<div class="form-group">\n  <div class="col">\n    <select id="trip-from" name="selectbasic" class="form-control">\n      <option value="">From</option>\n      <% cities.forEach(function(city){ %>\n        <option value="<%= city %>"><%= city %></option>\n      <% }); %>\n    </select>\n  </div>\n  <div class="col">\n    <select id="trip-to" name="selectbasic" class="form-control">\n      <option value="">To</option>\n      <% cities.forEach(function(city){ %>\n        <option value="<%= city %>"><%= city %></option>\n      <% }); %>\n    </select>\n  </div>\n</div>\n\n<!-- Multiple Radios (inline) -->\n<div class="form-group" id="trip-mode">\n  <label class="radio-inline" for="cheapest">\n    <input type="radio" name="trip-mode" id="cheapest" value="cheapest" checked>\n    Cheapest\n  </label>\n  <label class="radio-inline" for="fastest">\n    <input type="radio" name="trip-mode" id="fastest" value="fastest">\n    Fastest\n  </label>\n</div>\n\n<!-- Button -->\n<div class="form-group">\n  <button id="trip-button" name="singlebutton" class="btn btn-primary" disabled>Let\'s Go</button>\n</div>\n</form>\n',
         filename: "."
     };
     function rethrow(err, str, filename, lineno) {
@@ -635,19 +667,19 @@ module.exports = function anonymous(locals, filters, escape, rethrow) {
         var buf = [];
         with (locals || {}) {
             (function() {
-                buf.push('<form id="trip-form" class="form-horizontal">\n<fieldset>\n\n<!-- Select Basic -->\n<div class="form-group">\n  <div class="col-md-5">\n    <select id="trip-from" name="selectbasic" class="form-control">\n      <option>From</option>\n      ');
-                __stack.lineno = 9;
+                buf.push('<form id="trip-form" class="form-horizontal">\n<!-- Select Basic -->\n<div class="form-group">\n  <div class="col">\n    <select id="trip-from" name="selectbasic" class="form-control">\n      <option value="">From</option>\n      ');
+                __stack.lineno = 7;
                 cities.forEach(function(city) {
-                    buf.push('\n        <option value="', escape((__stack.lineno = 10, city)), '">', escape((__stack.lineno = 10, city)), "</option>\n      ");
-                    __stack.lineno = 11;
+                    buf.push('\n        <option value="', escape((__stack.lineno = 8, city)), '">', escape((__stack.lineno = 8, city)), "</option>\n      ");
+                    __stack.lineno = 9;
                 });
-                buf.push('\n    </select>\n  </div>\n  <div class="col-md-5">\n    <select id="trip-to" name="selectbasic" class="form-control">\n      <option>To</option>\n      ');
-                __stack.lineno = 17;
+                buf.push('\n    </select>\n  </div>\n  <div class="col">\n    <select id="trip-to" name="selectbasic" class="form-control">\n      <option value="">To</option>\n      ');
+                __stack.lineno = 15;
                 cities.forEach(function(city) {
-                    buf.push('\n        <option value="', escape((__stack.lineno = 18, city)), '">', escape((__stack.lineno = 18, city)), "</option>\n      ");
-                    __stack.lineno = 19;
+                    buf.push('\n        <option value="', escape((__stack.lineno = 16, city)), '">', escape((__stack.lineno = 16, city)), "</option>\n      ");
+                    __stack.lineno = 17;
                 });
-                buf.push('\n    </select>\n  </div>\n</div>\n\n<!-- Multiple Radios (inline) -->\n<div class="form-group" id="trip-mode">\n  <label class="radio-inline" for="cheapest">\n    <input type="radio" name="trip-mode" id="cheapest" value="cheapest" checked>\n    Cheapest\n  </label>\n  <label class="radio-inline" for="fastest">\n    <input type="radio" name="trip-mode" id="fastest" value="fastest">\n    Fastest\n  </label>\n</div>\n\n<!-- Button -->\n<div class="form-group">\n  <div class="col-md-4">\n    <button id="singlebutton" name="singlebutton" class="btn btn-primary">Let\'s Go</button>\n  </div>\n</div>\n\n</fieldset>\n</form>\n');
+                buf.push('\n    </select>\n  </div>\n</div>\n\n<!-- Multiple Radios (inline) -->\n<div class="form-group" id="trip-mode">\n  <label class="radio-inline" for="cheapest">\n    <input type="radio" name="trip-mode" id="cheapest" value="cheapest" checked>\n    Cheapest\n  </label>\n  <label class="radio-inline" for="fastest">\n    <input type="radio" name="trip-mode" id="fastest" value="fastest">\n    Fastest\n  </label>\n</div>\n\n<!-- Button -->\n<div class="form-group">\n  <button id="trip-button" name="singlebutton" class="btn btn-primary" disabled>Let\'s Go</button>\n</div>\n</form>\n');
             })();
         }
         return buf.join("");
@@ -666,7 +698,47 @@ module.exports = function anonymous(locals, filters, escape, rethrow) {
 /* 10 */
 /***/ (function(module, exports) {
 
-module.exports = "<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <!-- <link rel=\"stylesheet\" href=\"http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css\"> -->\n  <!-- <link href=\"https://fonts.googleapis.com/css?family=Montserrat:400,500,700\" rel=\"stylesheet\"> -->\n  <!-- <link rel=\"stylesheet\" href=\"./css/trippy.css\"> -->\n  <title>Trippy</title>\n</head>\n<body>\n\n<div id=\"trippy-app\">\n  <div id=\"trip-form\"></div>\n  <ul id=\"board-list\"></ul>\n</div>\n\n<!-- <script src=\"./js/trippy.js\" type=\"text/javascript\"></script> -->\n<script id=\"__bs_script__\">//<![CDATA[\n    document.write(\"<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.18.13'><\\/script>\".replace(\"HOST\", location.hostname));\n//]]></script>\n</body>\n</html>\n";
+module.exports = "<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <link rel=\"stylesheet\" href=\"http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css\">\n  <link href=\"https://fonts.googleapis.com/css?family=Montserrat:400,500,700\" rel=\"stylesheet\">\n  <!-- <link rel=\"stylesheet\" href=\"./css/trippy.css\"> -->\n  <title>Trippy</title>\n</head>\n<body>\n\n<div id=\"trippy-app\">\n  <div id=\"trip-form-wrapper\"></div>\n  <ul id=\"board-list\"></ul>\n</div>\n\n<!-- <script src=\"./js/trippy.js\" type=\"text/javascript\"></script> -->\n<script id=\"__bs_script__\">//<![CDATA[\n    document.write(\"<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.18.13'><\\/script>\".replace(\"HOST\", location.hostname));\n//]]></script>\n</body>\n</html>\n";
+
+/***/ }),
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */,
+/* 15 */
+/***/ (function(module, exports) {
+
+module.exports = function anonymous(locals, filters, escape, rethrow) {
+    escape = escape || function(html) {
+        return String(html).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+    };
+    var __stack = {
+        lineno: 1,
+        input: '<li>\n  <img src="https://media.giphy.com/media/KayVJ5lkB84rm/giphy.gif" alt="Great Scott ! ">\n</li>\n',
+        filename: "."
+    };
+    function rethrow(err, str, filename, lineno) {
+        var lines = str.split("\n"), start = Math.max(lineno - 3, 0), end = Math.min(lines.length, lineno + 3);
+        var context = lines.slice(start, end).map(function(line, i) {
+            var curr = i + start + 1;
+            return (curr == lineno ? " >> " : "    ") + curr + "| " + line;
+        }).join("\n");
+        err.path = filename;
+        err.message = (filename || "ejs") + ":" + lineno + "\n" + context + "\n\n" + err.message;
+        throw err;
+    }
+    try {
+        var buf = [];
+        with (locals || {}) {
+            (function() {
+                buf.push('<li>\n  <img src="https://media.giphy.com/media/KayVJ5lkB84rm/giphy.gif" alt="Great Scott ! ">\n</li>\n');
+            })();
+        }
+        return buf.join("");
+    } catch (err) {
+        rethrow(err, __stack.input, __stack.filename, __stack.lineno);
+    }
+}
 
 /***/ })
 /******/ ]);

@@ -1,19 +1,17 @@
 <form id="trip-form" class="form-horizontal">
-<fieldset>
-
 <!-- Select Basic -->
 <div class="form-group">
-  <div class="col-md-5">
+  <div class="col">
     <select id="trip-from" name="selectbasic" class="form-control">
-      <option>From</option>
+      <option value="">From</option>
       <% cities.forEach(function(city){ %>
         <option value="<%= city %>"><%= city %></option>
       <% }); %>
     </select>
   </div>
-  <div class="col-md-5">
+  <div class="col">
     <select id="trip-to" name="selectbasic" class="form-control">
-      <option>To</option>
+      <option value="">To</option>
       <% cities.forEach(function(city){ %>
         <option value="<%= city %>"><%= city %></option>
       <% }); %>
@@ -35,10 +33,6 @@
 
 <!-- Button -->
 <div class="form-group">
-  <div class="col-md-4">
-    <button id="singlebutton" name="singlebutton" class="btn btn-primary">Let's Go</button>
-  </div>
+  <button id="trip-button" name="singlebutton" class="btn btn-primary" disabled>Let's Go</button>
 </div>
-
-</fieldset>
 </form>

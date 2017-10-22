@@ -6,11 +6,12 @@ $card-shadow: 0 1px 4px 1px rgba(44, 87, 155, 0.12);
 .board-card {
   background-color: white;
   box-shadow: 0 0 0 0 black;
-  width: 600px;
+  width: 100%;
+  max-width: 600px;
   display: flex;
   flex-direction: column;
   height: auto;
-  margin: 24px 0;
+  margin: 8px 0;
   font-family: 'Montserrat', sans-serif;
   box-shadow: $card-shadow;
   border-radius: 3px;
