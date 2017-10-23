@@ -1,8 +1,22 @@
 <div class="trip-total">
-  <div class="trip-cost">
-    <span><%= cost %></span>
+
+  <div class="trip-summary">
+    <span class="label">Trip Summary</span>
+    <div class="trip-route">
+      <span><%= departure %></span>
+      <i class="ion-arrow-right-c"></i>
+      <span><%= arrival %></span>
+    </div>
   </div>
-  <div class="trip-duration">
-    <span><%= duration %></span>
+  <div class="trip-cost-wrapper">
+    <div class="trip-cost">
+      <span class="label">Total</span>
+      <span><%= cost %>€</span>
+    </div>
+    <div class="trip-duration">
+      <span class="label">Duration</span>
+      <span><%= duration %></span>
+    </div>
   </div>
+
 </div>

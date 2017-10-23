@@ -19,6 +19,8 @@ const trippy = {
       this.getItinerary(mode, departure, arrival)
         .then((itinerary) => {
           const totalTrip = {
+            departure,
+            arrival,
             cost: 0,
             duration: 0,
           };
@@ -36,8 +38,10 @@ const trippy = {
         })
         .then((total) => {
 
-          const { cost, duration } = total;
+          const { departure, arrival, cost, duration } = total;
           const renderTotalData = {
+            departure,
+            arrival,
             cost,
             duration: toHours(duration),
           }

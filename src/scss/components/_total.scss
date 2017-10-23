@@ -1,4 +1,43 @@
 .trip-total {
   display: flex;
+  padding: 24px 16px;
+  justify-content: space-between;
 
+  .trip-summary {
+    display: flex;
+    flex-direction: column;
+
+    .trip-route {
+      display: flex;
+
+      > *:not(:first-child) {
+        padding: 0 16px;
+      }
+    }
+
+    .span {
+      align-self: flex-start;
+    }
+  }
+
+  .trip-cost-wrapper {
+    display: flex;
+    flex-direction: row;
+
+    > div {
+      display: flex;
+      flex-direction: column;
+      padding: 0 16px;
+    }
+  }
+
+  > div {
+
+    .label {
+      text-transform: uppercase;
+      font-size: 12px;
+      padding-bottom: 8px;
+      color: $black_label;
+    }
+  }
 }

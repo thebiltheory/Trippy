@@ -233,6 +233,8 @@ var trippy = {
     } else {
       this.getItinerary(mode, departure, arrival).then(function (itinerary) {
         var totalTrip = {
+          departure: departure,
+          arrival: arrival,
           cost: 0,
           duration: 0
         };
@@ -248,10 +250,14 @@ var trippy = {
 
         return totalTrip;
       }).then(function (total) {
-        var cost = total.cost,
+        var departure = total.departure,
+            arrival = total.arrival,
+            cost = total.cost,
             duration = total.duration;
 
         var renderTotalData = {
+          departure: departure,
+          arrival: arrival,
           cost: cost,
           duration: (0, _helpers.toHours)(duration)
         };
@@ -782,7 +788,7 @@ module.exports = function anonymous(locals, filters, escape, rethrow) {
     };
     var __stack = {
         lineno: 1,
-        input: '<div class="trip-total">\n  <div class="trip-cost">\n    <span><%= cost %></span>\n  </div>\n  <div class="trip-duration">\n    <span><%= duration %></span>\n  </div>\n</div>\n',
+        input: '<div class="trip-total">\n\n  <div class="trip-summary">\n    <span class="label">Trip Summary</span>\n    <div class="trip-route">\n      <span><%= departure %></span>\n      <i class="ion-arrow-right-c"></i>\n      <span><%= arrival %></span>\n    </div>\n  </div>\n  <div class="trip-cost-wrapper">\n    <div class="trip-cost">\n      <span class="label">Total</span>\n      <span><%= cost %>€</span>\n    </div>\n    <div class="trip-duration">\n      <span class="label">Duration</span>\n      <span><%= duration %></span>\n    </div>\n  </div>\n\n</div>\n',
         filename: "."
     };
     function rethrow(err, str, filename, lineno) {
@@ -799,7 +805,7 @@ module.exports = function anonymous(locals, filters, escape, rethrow) {
         var buf = [];
         with (locals || {}) {
             (function() {
-                buf.push('<div class="trip-total">\n  <div class="trip-cost">\n    <span>', escape((__stack.lineno = 3, cost)), '</span>\n  </div>\n  <div class="trip-duration">\n    <span>', escape((__stack.lineno = 6, duration)), "</span>\n  </div>\n</div>\n");
+                buf.push('<div class="trip-total">\n\n  <div class="trip-summary">\n    <span class="label">Trip Summary</span>\n    <div class="trip-route">\n      <span>', escape((__stack.lineno = 6, departure)), '</span>\n      <i class="ion-arrow-right-c"></i>\n      <span>', escape((__stack.lineno = 8, arrival)), '</span>\n    </div>\n  </div>\n  <div class="trip-cost-wrapper">\n    <div class="trip-cost">\n      <span class="label">Total</span>\n      <span>', escape((__stack.lineno = 14, cost)), '€</span>\n    </div>\n    <div class="trip-duration">\n      <span class="label">Duration</span>\n      <span>', escape((__stack.lineno = 18, duration)), "</span>\n    </div>\n  </div>\n\n</div>\n");
             })();
         }
         return buf.join("");

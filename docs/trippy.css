@@ -163,6 +163,29 @@ body {
           position: relative; }
 
 .trip-total {
-  display: flex; }
+  display: flex;
+  padding: 24px 16px;
+  justify-content: space-between; }
+  .trip-total .trip-summary {
+    display: flex;
+    flex-direction: column; }
+    .trip-total .trip-summary .trip-route {
+      display: flex; }
+      .trip-total .trip-summary .trip-route > *:not(:first-child) {
+        padding: 0 16px; }
+    .trip-total .trip-summary .span {
+      align-self: flex-start; }
+  .trip-total .trip-cost-wrapper {
+    display: flex;
+    flex-direction: row; }
+    .trip-total .trip-cost-wrapper > div {
+      display: flex;
+      flex-direction: column;
+      padding: 0 16px; }
+  .trip-total > div .label {
+    text-transform: uppercase;
+    font-size: 12px;
+    padding-bottom: 8px;
+    color: rgba(0, 0, 0, 0.54); }
 
 /*# sourceMappingURL=trippy.css.map*/
