@@ -45,7 +45,6 @@ export default class Itinerary {
 
       if (this.smallest === arrival) {
         while (this.previous[this.smallest]) {
-          // const travelMode = this.mode;
           const previousS = this.vertices[this.previous[this.smallest]];
           const smallest = this.smallest;
           const stop = sorter(mode, previousS, smallest);
@@ -66,7 +65,6 @@ export default class Itinerary {
       });
     }
 
-    // console.table(this.route.reverse());
     return this.route.reverse();
   }
 }

@@ -1,9 +1,10 @@
 import Itinerary from './app/modules/Itinerary';
-import { groupBy, append, getValue, listenTo, resetHtml, docReady, getRadioValue, totalSum } from './app/utils/helpers';
+import { groupBy, append, getValue, listenTo, resetHtml, docReady, getRadioValue, toHours } from './app/utils/helpers';
 import { trippyGet } from './app/api/api';
 import Card from './app/components/card.ejs';
 import Form from './app/components/form.ejs';
 import Oops from './app/components/oops.ejs';
+import Total from './app/components/total.ejs';
 
 const deals = '../response.json';
 
@@ -17,20 +18,33 @@ const trippy = {
     } else {
       this.getItinerary(mode, departure, arrival)
         .then((itinerary) => {
+          const totalTrip = {
+            cost: 0,
+            duration: 0,
+          };
+
           itinerary.forEach((card, i) => {
+            totalTrip.cost += card.cost;
+            totalTrip.duration += card.duration.total;
+
             setTimeout(() => {
-              console.log(itinerary);
               this.renderCard(card);
             }, 100 * i);
           });
 
-          const v = itinerary.reduce((a, b) => {
-            console.log(a.cost + b.cost);
-          });
-          console.log(v);
+          return totalTrip;
+        })
+        .then((total) => {
+
+          const { cost, duration } = total;
+          const renderTotalData = {
+            cost,
+            duration: toHours(duration),
+          }
+
+          this.renderTotal(renderTotalData);
         });
     }
-
   },
 
   loadDestinations() {
@@ -63,6 +77,12 @@ const trippy = {
   renderCard(itinerary) {
     const card = Card(itinerary);
     append('board-list', card);
+  },
+
+  renderTotal(totalData) {
+    resetHtml('trip-total');
+    const total = Total(totalData);
+    append('trip-total', total);
   },
 
   renderForm(data) {

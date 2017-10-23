@@ -1,4 +1,4 @@
-import { minItem, applyDiscount, toMinutes } from '../utils/helpers';
+import { minItem, minDuration, applyDiscount, toMinutes } from '../utils/helpers';
 
 // export const route = [];
 
@@ -31,12 +31,11 @@ export const sorter = (mode, previous, smallest) => {
       break;
     }
     case 'fastest': {
-      // stop = minItem(stops, 'duration', 'total');
-      stop = minItem(stops, 'duration');
+      stop = minDuration(stops, 'duration');
       break;
     }
     default: {
-      stop = minItem(stops, 'cost');
+      stop = minItem(stops);
     }
   }
 

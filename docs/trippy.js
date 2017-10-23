@@ -88,14 +88,16 @@ var applyDiscount = exports.applyDiscount = function applyDiscount(price, discou
 
 /** @function minItem */
 var minItem = exports.minItem = function minItem(array) {
-  for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    args[_key - 1] = arguments[_key];
-  }
+  return array.reduce(function (prev, curr) {
+    return prev.cost < curr.cost ? prev : curr;
+  });
+};
 
-  var keys = args.join('.');
-  return array.sort(function (a, b) {
-    return a[keys] - b[keys];
-  })[0];
+/** @function minDuration */
+var minDuration = exports.minDuration = function minDuration(array) {
+  return array.reduce(function (prev, curr) {
+    return prev.duration.total < curr.duration.total ? prev : curr;
+  });
 };
 
 /** @function groupBy */
@@ -114,6 +116,16 @@ var groupBy = exports.groupBy = function groupBy(array, key) {
 /** @function toMinutes */
 var toMinutes = exports.toMinutes = function toMinutes(hours, minutes) {
   return 60 * parseInt(hours, 10) + parseInt(minutes, 10);
+};
+
+/** @function toHours */
+var toHours = exports.toHours = function toHours(minutes) {
+  var minToHours = minutes / 60;
+  var hours = Math.round(Math.floor(minToHours));
+  var minCalc = Math.ceil((minToHours - Math.round(Math.floor(minToHours))) * 60);
+  var min = minCalc < 10 ? '0' + minCalc : minCalc;
+
+  return hours + 'H' + min;
 };
 
 /** @function totalSum */
@@ -167,8 +179,8 @@ var docReady = exports.docReady = function docReady(initFn) {
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(2);
-__webpack_require__(9);
-module.exports = __webpack_require__(10);
+__webpack_require__(10);
+module.exports = __webpack_require__(11);
 
 
 /***/ }),
@@ -194,9 +206,13 @@ var _form = __webpack_require__(8);
 
 var _form2 = _interopRequireDefault(_form);
 
-var _oops = __webpack_require__(15);
+var _oops = __webpack_require__(9);
 
 var _oops2 = _interopRequireDefault(_oops);
+
+var _total = __webpack_require__(16);
+
+var _total2 = _interopRequireDefault(_total);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -216,17 +232,31 @@ var trippy = {
       (0, _helpers.append)('board-list', oops);
     } else {
       this.getItinerary(mode, departure, arrival).then(function (itinerary) {
+        var totalTrip = {
+          cost: 0,
+          duration: 0
+        };
+
         itinerary.forEach(function (card, i) {
+          totalTrip.cost += card.cost;
+          totalTrip.duration += card.duration.total;
+
           setTimeout(function () {
-            console.log(itinerary);
             _this.renderCard(card);
           }, 100 * i);
         });
 
-        var v = itinerary.reduce(function (a, b) {
-          console.log(a.cost + b.cost);
-        });
-        console.log(v);
+        return totalTrip;
+      }).then(function (total) {
+        var cost = total.cost,
+            duration = total.duration;
+
+        var renderTotalData = {
+          cost: cost,
+          duration: (0, _helpers.toHours)(duration)
+        };
+
+        _this.renderTotal(renderTotalData);
       });
     }
   },
@@ -258,6 +288,11 @@ var trippy = {
   renderCard: function renderCard(itinerary) {
     var card = (0, _card2.default)(itinerary);
     (0, _helpers.append)('board-list', card);
+  },
+  renderTotal: function renderTotal(totalData) {
+    (0, _helpers.resetHtml)('trip-total');
+    var total = (0, _total2.default)(totalData);
+    (0, _helpers.append)('trip-total', total);
   },
   renderForm: function renderForm(data) {
     var form = (0, _form2.default)(data);
@@ -392,7 +427,6 @@ var Itinerary = function () {
 
         if (this.smallest === arrival) {
           while (this.previous[this.smallest]) {
-            // const travelMode = this.mode;
             var previousS = this.vertices[this.previous[this.smallest]];
             var smallest = this.smallest;
             var stop = (0, _Sorter.sorter)(mode, previousS, smallest);
@@ -413,7 +447,6 @@ var Itinerary = function () {
         });
       }
 
-      // console.table(this.route.reverse());
       return this.route.reverse();
     }
   }]);
@@ -550,13 +583,12 @@ var sorter = exports.sorter = function sorter(mode, previous, smallest) {
       }
     case 'fastest':
       {
-        // stop = minItem(stops, 'duration', 'total');
-        stop = (0, _helpers.minItem)(stops, 'duration');
+        stop = (0, _helpers.minDuration)(stops, 'duration');
         break;
       }
     default:
       {
-        stop = (0, _helpers.minItem)(stops, 'cost');
+        stop = (0, _helpers.minItem)(stops);
       }
   }
 
@@ -692,22 +724,6 @@ module.exports = function anonymous(locals, filters, escape, rethrow) {
 /* 9 */
 /***/ (function(module, exports) {
 
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports) {
-
-module.exports = "<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <link rel=\"stylesheet\" href=\"http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css\">\n  <link href=\"https://fonts.googleapis.com/css?family=Montserrat:400,500,700\" rel=\"stylesheet\">\n  <!-- <link rel=\"stylesheet\" href=\"./css/trippy.css\"> -->\n  <title>Trippy</title>\n</head>\n<body>\n\n<div id=\"trippy-app\">\n  <div id=\"trip-form-wrapper\"></div>\n  <ul id=\"board-list\"></ul>\n</div>\n\n<!-- <script src=\"./js/trippy.js\" type=\"text/javascript\"></script> -->\n<script id=\"__bs_script__\">//<![CDATA[\n    document.write(\"<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.18.13'><\\/script>\".replace(\"HOST\", location.hostname));\n//]]></script>\n</body>\n</html>\n";
-
-/***/ }),
-/* 11 */,
-/* 12 */,
-/* 13 */,
-/* 14 */,
-/* 15 */
-/***/ (function(module, exports) {
-
 module.exports = function anonymous(locals, filters, escape, rethrow) {
     escape = escape || function(html) {
         return String(html).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
@@ -732,6 +748,58 @@ module.exports = function anonymous(locals, filters, escape, rethrow) {
         with (locals || {}) {
             (function() {
                 buf.push('<li>\n  <img src="https://media.giphy.com/media/KayVJ5lkB84rm/giphy.gif" alt="Great Scott ! ">\n</li>\n');
+            })();
+        }
+        return buf.join("");
+    } catch (err) {
+        rethrow(err, __stack.input, __stack.filename, __stack.lineno);
+    }
+}
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+module.exports = "<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <link rel=\"stylesheet\" href=\"http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css\">\n  <link href=\"https://fonts.googleapis.com/css?family=Montserrat:400,500,700\" rel=\"stylesheet\">\n  <!-- <link rel=\"stylesheet\" href=\"./css/trippy.css\"> -->\n  <title>Trippy</title>\n</head>\n<body>\n\n<div id=\"trippy-app\">\n  <div id=\"trip-form-wrapper\"></div>\n  <div id=\"trip-total\"></div>\n  <ul id=\"board-list\"></ul>\n</div>\n\n<!-- <script src=\"./js/trippy.js\" type=\"text/javascript\"></script> -->\n<script id=\"__bs_script__\">//<![CDATA[\n    document.write(\"<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.18.13'><\\/script>\".replace(\"HOST\", location.hostname));\n//]]></script>\n</body>\n</html>\n";
+
+/***/ }),
+/* 12 */,
+/* 13 */,
+/* 14 */,
+/* 15 */,
+/* 16 */
+/***/ (function(module, exports) {
+
+module.exports = function anonymous(locals, filters, escape, rethrow) {
+    escape = escape || function(html) {
+        return String(html).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+    };
+    var __stack = {
+        lineno: 1,
+        input: '<div class="trip-total">\n  <div class="trip-cost">\n    <span><%= cost %></span>\n  </div>\n  <div class="trip-duration">\n    <span><%= duration %></span>\n  </div>\n</div>\n',
+        filename: "."
+    };
+    function rethrow(err, str, filename, lineno) {
+        var lines = str.split("\n"), start = Math.max(lineno - 3, 0), end = Math.min(lines.length, lineno + 3);
+        var context = lines.slice(start, end).map(function(line, i) {
+            var curr = i + start + 1;
+            return (curr == lineno ? " >> " : "    ") + curr + "| " + line;
+        }).join("\n");
+        err.path = filename;
+        err.message = (filename || "ejs") + ":" + lineno + "\n" + context + "\n\n" + err.message;
+        throw err;
+    }
+    try {
+        var buf = [];
+        with (locals || {}) {
+            (function() {
+                buf.push('<div class="trip-total">\n  <div class="trip-cost">\n    <span>', escape((__stack.lineno = 3, cost)), '</span>\n  </div>\n  <div class="trip-duration">\n    <span>', escape((__stack.lineno = 6, duration)), "</span>\n  </div>\n</div>\n");
             })();
         }
         return buf.join("");

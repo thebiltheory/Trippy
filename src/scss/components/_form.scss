@@ -43,6 +43,19 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.8;
+
+      &:disabled {
+        background: lighten($ronchi, 10%);
+        cursor:  not-allowed;
+
+        &::after {
+          content: 'Select destinations first';
+          text-transform: none;
+          display: block;
+          font-weight: 100;
+          position: relative;
+        }
+      }
     }
   }
 }

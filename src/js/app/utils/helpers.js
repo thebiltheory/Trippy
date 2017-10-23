@@ -7,12 +7,14 @@
 export const applyDiscount = (price, discount) => price - (price * (discount / 100));
 
 /** @function minItem */
-export const minItem = (array, ...args) => {
-  const keys = args.join('.');
-  return array.sort((a, b) => {
-    return a[keys] - b[keys];
-  })[0];
-};
+export const minItem = array => array.reduce((prev, curr) => {
+  return prev.cost < curr.cost ? prev : curr;
+});
+
+/** @function minDuration */
+export const minDuration = array => array.reduce((prev, curr) => {
+  return prev.duration.total < curr.duration.total ? prev : curr;
+});
 
 /** @function groupBy */
 /* Reference for future me
@@ -30,6 +32,16 @@ export const groupBy = (array, key) => {
 /** @function toMinutes */
 export const toMinutes = (hours, minutes) => {
   return (60 * parseInt(hours, 10)) + parseInt(minutes, 10);
+};
+
+/** @function toHours */
+export const toHours = (minutes) => {
+  const minToHours = minutes / 60;
+  const hours = Math.round(Math.floor(minToHours));
+  const minCalc = Math.ceil((minToHours - (Math.round(Math.floor(minToHours)))) * 60);
+  const min = minCalc < 10 ? `0${minCalc}` : minCalc;
+
+  return `${hours}H${min}`;
 };
 
 /** @function totalSum */
