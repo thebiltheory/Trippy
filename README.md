@@ -6,6 +6,10 @@ Install Yarn (if not already have)
 ```Bash
 $ npm install -g yarn
 ```
+Install dependencies
+```Bash
+$ yarn
+```
 
 Launch dev and local server
 ```Bash
