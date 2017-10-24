@@ -179,8 +179,8 @@ var docReady = exports.docReady = function docReady(initFn) {
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(2);
-__webpack_require__(10);
-module.exports = __webpack_require__(11);
+__webpack_require__(11);
+module.exports = __webpack_require__(12);
 
 
 /***/ }),
@@ -210,7 +210,7 @@ var _oops = __webpack_require__(9);
 
 var _oops2 = _interopRequireDefault(_oops);
 
-var _total = __webpack_require__(16);
+var _total = __webpack_require__(10);
 
 var _total2 = _interopRequireDefault(_total);
 
@@ -320,6 +320,7 @@ var trippy = {
       var currency = cities.currency,
           deals = cities.deals;
 
+      console.log(cities);
       var destinations = (0, _helpers.groupBy)(deals, 'departure');
       var route = new _Itinerary2.default(destinations);
 
@@ -428,6 +429,7 @@ var Itinerary = function () {
         _this.previous[vertex] = null;
       });
 
+      // TODO: Refactor with Recursive functions
       while (!this.nodes.isEmpty()) {
         this.smallest = this.nodes.dequeue();
 
@@ -551,8 +553,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.sorter = undefined;
 
 var _helpers = __webpack_require__(0);
-
-// export const route = [];
 
 var shortestRoute = function shortestRoute(previousSmallest, smallest) {
   return previousSmallest.filter(function (dest) {
@@ -766,22 +766,6 @@ module.exports = function anonymous(locals, filters, escape, rethrow) {
 /* 10 */
 /***/ (function(module, exports) {
 
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports) {
-
-module.exports = "<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <link rel=\"stylesheet\" href=\"http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css\">\n  <link href=\"https://fonts.googleapis.com/css?family=Montserrat:400,500,700\" rel=\"stylesheet\">\n  <!-- <link rel=\"stylesheet\" href=\"./css/trippy.css\"> -->\n  <title>Trippy</title>\n</head>\n<body>\n\n<div id=\"trippy-app\">\n  <div id=\"trip-form-wrapper\"></div>\n  <div id=\"trip-total\"></div>\n  <ul id=\"board-list\"></ul>\n</div>\n\n<!-- <script src=\"./js/trippy.js\" type=\"text/javascript\"></script> -->\n<script id=\"__bs_script__\">//<![CDATA[\n    document.write(\"<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.18.13'><\\/script>\".replace(\"HOST\", location.hostname));\n//]]></script>\n</body>\n</html>\n";
-
-/***/ }),
-/* 12 */,
-/* 13 */,
-/* 14 */,
-/* 15 */,
-/* 16 */
-/***/ (function(module, exports) {
-
 module.exports = function anonymous(locals, filters, escape, rethrow) {
     escape = escape || function(html) {
         return String(html).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/'/g, "&#39;").replace(/"/g, "&quot;");
@@ -813,6 +797,18 @@ module.exports = function anonymous(locals, filters, escape, rethrow) {
         rethrow(err, __stack.input, __stack.filename, __stack.lineno);
     }
 }
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
+module.exports = "<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <link rel=\"stylesheet\" href=\"http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css\">\n  <link href=\"https://fonts.googleapis.com/css?family=Montserrat:400,500,700\" rel=\"stylesheet\">\n  <!-- <link rel=\"stylesheet\" href=\"./css/trippy.css\"> -->\n  <title>Trippy</title>\n</head>\n<body>\n\n<div id=\"trippy-app\">\n  <div id=\"trip-form-wrapper\"></div>\n  <div id=\"trip-total\"></div>\n  <ul id=\"board-list\"></ul>\n</div>\n\n<!-- <script src=\"./js/trippy.js\" type=\"text/javascript\"></script> -->\n<script id=\"__bs_script__\">//<![CDATA[\n    document.write(\"<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.18.13'><\\/script>\".replace(\"HOST\", location.hostname));\n//]]></script>\n</body>\n</html>\n";
 
 /***/ })
 /******/ ]);

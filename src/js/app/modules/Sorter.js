@@ -1,7 +1,5 @@
 import { minItem, minDuration, applyDiscount, toMinutes } from '../utils/helpers';
 
-// export const route = [];
-
 const shortestRoute = (previousSmallest, smallest) => {
   return previousSmallest.filter((dest) => {
     if (dest.arrival === smallest) {

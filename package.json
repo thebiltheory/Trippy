@@ -1,7 +1,7 @@
 {
   "name": "Trippy",
   "scripts": {
-    "test": "mocha --colors --compilers js:babel-core/register src/js/**/*/*test.js ",
+    "test": "mocha --colors --require babel-register src/js/**/*/*test.js ",
     "build": "webpack",
     "server": "browser-sync",
     "watch:build": "webpack -w",
