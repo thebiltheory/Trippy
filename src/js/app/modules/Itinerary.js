@@ -40,6 +40,7 @@ export default class Itinerary {
       this.previous[vertex] = null;
     });
 
+    // TODO: Refactor with Recursive functions
     while (!this.nodes.isEmpty()) {
       this.smallest = this.nodes.dequeue();
 
