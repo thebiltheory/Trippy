@@ -84,7 +84,6 @@ const trippy = {
   },
 
   renderTotal(totalData) {
-    resetHtml('trip-total');
     const total = Total(totalData);
     append('trip-total', total);
   },
@@ -131,6 +130,7 @@ const trippy = {
 
     listenTo('trip-form-wrapper', 'submit', (e) => {
       e.preventDefault();
+      resetHtml('trip-total');
       resetHtml('board-list');
       this.renderList(this.formValues());
     });

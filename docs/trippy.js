@@ -296,7 +296,6 @@ var trippy = {
     (0, _helpers.append)('board-list', card);
   },
   renderTotal: function renderTotal(totalData) {
-    (0, _helpers.resetHtml)('trip-total');
     var total = (0, _total2.default)(totalData);
     (0, _helpers.append)('trip-total', total);
   },
@@ -346,6 +345,7 @@ var trippy = {
 
     (0, _helpers.listenTo)('trip-form-wrapper', 'submit', function (e) {
       e.preventDefault();
+      (0, _helpers.resetHtml)('trip-total');
       (0, _helpers.resetHtml)('board-list');
       _this3.renderList(_this3.formValues());
     });
