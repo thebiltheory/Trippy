@@ -2,7 +2,7 @@
 
 ## Trip Sorter
 
-Try the [demo](trippy.thebiltheory.com)
+Try the [demo](http://trippy.thebiltheory.com)
 
 Install Yarn (if not already have)
 ```Bash
