@@ -216,9 +216,12 @@ var _total2 = _interopRequireDefault(_total);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/** Fake endpoint */
 var deals = '../response.json';
 
+/** @function trippy */
 var trippy = {
+  /** @function renderList */
   renderList: function renderList(values) {
     var _this = this;
 
@@ -266,6 +269,8 @@ var trippy = {
       });
     }
   },
+
+  /** @function loadDestinations */
   loadDestinations: function loadDestinations() {
     var _this2 = this;
 
@@ -291,18 +296,29 @@ var trippy = {
 
     return { cities: cities };
   },
+
+  /** @function renderCard */
   renderCard: function renderCard(itinerary) {
     var card = (0, _card2.default)(itinerary);
     (0, _helpers.append)('board-list', card);
   },
+
+
+  /** @function renderTotal */
   renderTotal: function renderTotal(totalData) {
     var total = (0, _total2.default)(totalData);
     (0, _helpers.append)('trip-total', total);
   },
+
+
+  /** @function renderForm */
   renderForm: function renderForm(data) {
     var form = (0, _form2.default)(data);
     (0, _helpers.append)('trip-form-wrapper', form);
   },
+
+
+  /** @function formValues */
   formValues: function formValues() {
     var formVal = {
       departure: (0, _helpers.getValue)('trip-from'),
@@ -312,6 +328,9 @@ var trippy = {
 
     return formVal;
   },
+
+
+  /** @function getItinerary */
   getItinerary: function getItinerary(mode, departure, arrival) {
     var trips = (0, _api.trippyGet)(deals);
 
@@ -326,6 +345,9 @@ var trippy = {
       return route.findRoute(mode, departure, arrival);
     });
   },
+
+
+  /** @function watchForm */
   watchForm: function watchForm() {
     var _this3 = this;
 
@@ -350,12 +372,16 @@ var trippy = {
       _this3.renderList(_this3.formValues());
     });
   },
+
+
+  /** @function init */
   init: function init() {
     this.loadDestinations();
     this.watchForm();
   }
 };
 
+/** @function docReady */
 (0, _helpers.docReady)(function () {
   trippy.init();
 });
@@ -403,6 +429,9 @@ var Itinerary = function () {
     this.smallest = null;
     this.route = [];
   }
+
+  /** @method findRoute */
+
 
   _createClass(Itinerary, [{
     key: 'findRoute',
@@ -577,6 +606,11 @@ var shortestRoute = function shortestRoute(previousSmallest, smallest) {
   });
 };
 
+/** @function sorter
+ * @param {string} mode cheapest or fastest
+ * @param {obj} previous smallest elements
+ * @param {string} smallest item of the nodes
+ */
 var sorter = exports.sorter = function sorter(mode, previous, smallest) {
   var stops = shortestRoute(previous, smallest);
 
@@ -585,6 +619,7 @@ var sorter = exports.sorter = function sorter(mode, previous, smallest) {
     case 'cheapest':
       {
         stop = (0, _helpers.minItem)(stops, 'cost');
+        console.log(stop.cost);
         break;
       }
     case 'fastest':
@@ -808,7 +843,7 @@ module.exports = function anonymous(locals, filters, escape, rethrow) {
 /* 12 */
 /***/ (function(module, exports) {
 
-module.exports = "<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <link rel=\"stylesheet\" href=\"http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css\">\n  <link href=\"https://fonts.googleapis.com/css?family=Montserrat:400,500,700\" rel=\"stylesheet\">\n  <!-- <link rel=\"stylesheet\" href=\"./css/trippy.css\"> -->\n  <title>Trippy</title>\n</head>\n<body>\n\n<div id=\"trippy-app\">\n  <div id=\"trip-form-wrapper\"></div>\n  <div id=\"trip-total\"></div>\n  <ul id=\"board-list\"></ul>\n</div>\n\n<!-- <script src=\"./js/trippy.js\" type=\"text/javascript\"></script> -->\n<script id=\"__bs_script__\">//<![CDATA[\n    document.write(\"<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.18.13'><\\/script>\".replace(\"HOST\", location.hostname));\n//]]></script>\n</body>\n</html>\n";
+module.exports = "<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">\n  <meta name=\"description\" content=\"Get trippy deals on the budget or go fast\">\n  <link rel=\"stylesheet\" href=\"http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css\">\n  <link href=\"https://fonts.googleapis.com/css?family=Montserrat:400,500,700\" rel=\"stylesheet\">\n  <title>Trippy</title>\n</head>\n<body>\n\n<div id=\"trippy-app\">\n  <div id=\"trip-form-wrapper\"></div>\n  <div id=\"trip-total\"></div>\n  <ul id=\"board-list\"></ul>\n</div>\n\n<!-- <script src=\"./js/trippy.js\" type=\"text/javascript\"></script> -->\n<script id=\"__bs_script__\">//<![CDATA[\n    document.write(\"<script async src='http://HOST:3000/browser-sync/browser-sync-client.js?v=2.18.13'><\\/script>\".replace(\"HOST\", location.hostname));\n//]]></script>\n</body>\n</html>\n";
 
 /***/ })
 /******/ ]);

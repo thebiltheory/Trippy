@@ -19,6 +19,7 @@ export default class Itinerary {
     this.route = [];
   }
 
+  /** @method findRoute */
   findRoute(mode, departure, arrival) {
     const adj = (neighbor, alt) => {
       this.distances[neighbor] = alt;

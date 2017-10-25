@@ -2,6 +2,8 @@
 
 ## Trip Sorter
 
+Try the [demo](trippy.thebiltheory.com)
+
 Install Yarn (if not already have)
 ```Bash
 $ npm install -g yarn

@@ -6,9 +6,12 @@ import Form from './app/components/form.ejs';
 import Oops from './app/components/oops.ejs';
 import Total from './app/components/total.ejs';
 
+/** Fake endpoint */
 const deals = '../response.json';
 
+/** @function trippy */
 const trippy = {
+  /** @function renderList */
   renderList(values) {
     const { mode, departure, arrival } = values;
 
@@ -50,7 +53,7 @@ const trippy = {
         });
     }
   },
-
+  /** @function loadDestinations */
   loadDestinations() {
     const getCities = trippyGet(deals);
     const allCities = [];
@@ -77,22 +80,25 @@ const trippy = {
 
     return { cities };
   },
-
+  /** @function renderCard */
   renderCard(itinerary) {
     const card = Card(itinerary);
     append('board-list', card);
   },
 
+  /** @function renderTotal */
   renderTotal(totalData) {
     const total = Total(totalData);
     append('trip-total', total);
   },
 
+  /** @function renderForm */
   renderForm(data) {
     const form = Form(data);
     append('trip-form-wrapper', form);
   },
 
+  /** @function formValues */
   formValues() {
     const formVal = {
       departure: getValue('trip-from'),
@@ -103,6 +109,7 @@ const trippy = {
     return formVal;
   },
 
+  /** @function getItinerary */
   getItinerary(mode, departure, arrival) {
     const trips = trippyGet(deals);
 
@@ -116,6 +123,7 @@ const trippy = {
     });
   },
 
+  /** @function watchForm */
   watchForm() {
     listenTo('trip-form-wrapper', 'change', (e) => {
       e.preventDefault();
@@ -136,12 +144,14 @@ const trippy = {
     });
   },
 
+  /** @function init */
   init() {
     this.loadDestinations();
     this.watchForm();
   },
 };
 
+/** @function docReady */
 docReady(() => {
   trippy.init();
 });

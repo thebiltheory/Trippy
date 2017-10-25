@@ -1,4 +1,4 @@
-import assert from 'Chai';
+import { assert } from 'Chai';
 import PriorityQueue from '../../app/modules/PriorityQueue';
 
 describe('PriorityQueue', function () {
@@ -11,8 +11,8 @@ describe('PriorityQueue', function () {
     nodes.enqueue('Gotham', Infinity);
     nodes.enqueue('Kiev', Infinity);
 
-    return nodes[0] === 'Brussels';
-  })
+    assert.equal(nodes.dequeue(), 'Brussels');
+  });
 
   it('Should return the first element of the nodes', function() {
     const nodes = new PriorityQueue();
@@ -21,14 +21,14 @@ describe('PriorityQueue', function () {
     nodes.enqueue('Konoha', Infinity);
     nodes.enqueue('Brussels', Infinity);
 
-    return nodes.dequeue() === 'Tokyo';
-  })
+    assert.equal(nodes.dequeue(), 'Tokyo');
+  });
 
   it('Should return true if the nodes are empty', function () {
     const nodes = new PriorityQueue();
 
-    return nodes.isEmpty();
-  })
+    assert.equal(nodes.isEmpty(), true);
+  });
 
   it('Should return false if nodes is full', function () {
     const nodes = new PriorityQueue();
@@ -37,6 +37,6 @@ describe('PriorityQueue', function () {
     nodes.enqueue('Konoha', Infinity);
     nodes.enqueue('Brussels', Infinity);
 
-    return !nodes.isEmpty();
-  })
+    assert.equal(nodes.isEmpty(), false);
+  });
 });

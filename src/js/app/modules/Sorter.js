@@ -19,6 +19,11 @@ const shortestRoute = (previousSmallest, smallest) => {
   });
 };
 
+/** @function sorter
+ * @param {string} mode cheapest or fastest
+ * @param {obj} previous smallest elements
+ * @param {string} smallest item of the nodes
+ */
 export const sorter = (mode, previous, smallest) => {
   const stops = shortestRoute(previous, smallest);
 
@@ -26,6 +31,7 @@ export const sorter = (mode, previous, smallest) => {
   switch (mode) {
     case 'cheapest': {
       stop = minItem(stops, 'cost');
+      console.log(stop.cost);
       break;
     }
     case 'fastest': {
