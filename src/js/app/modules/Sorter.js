@@ -31,7 +31,6 @@ export const sorter = (mode, previous, smallest) => {
   switch (mode) {
     case 'cheapest': {
       stop = minItem(stops, 'cost');
-      console.log(stop.cost);
       break;
     }
     case 'fastest': {

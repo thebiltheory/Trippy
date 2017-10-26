@@ -338,7 +338,6 @@ var trippy = {
       var currency = cities.currency,
           deals = cities.deals;
 
-      console.log(cities);
       var destinations = (0, _helpers.groupBy)(deals, 'departure');
       var route = new _Itinerary2.default(destinations);
 
@@ -619,7 +618,6 @@ var sorter = exports.sorter = function sorter(mode, previous, smallest) {
     case 'cheapest':
       {
         stop = (0, _helpers.minItem)(stops, 'cost');
-        console.log(stop.cost);
         break;
       }
     case 'fastest':

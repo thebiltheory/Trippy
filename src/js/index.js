@@ -115,7 +115,6 @@ const trippy = {
 
     return trips.then((cities) => {
       const { currency, deals } = cities;
-      console.log(cities);
       const destinations = groupBy(deals, 'departure');
       const route = new Itinerary(destinations);
 
