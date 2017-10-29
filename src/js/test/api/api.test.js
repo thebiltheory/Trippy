@@ -1,18 +1,20 @@
+import { assert } from 'chai';
 import { trippyGet } from '../../app/api/api';
 
 const endpoint = '../../app/api/reponse.json';
 
-before(function () {
-  this.jsdom = require('jsdom-global')();
-});
+describe('API', function () {
+  it('Should resolve a promise', function (done) {
+    const api = trippyGet(endpoint);
+      api.then((response) => {
+        console.log(reponse);
 
-after(function () {
-  this.jsdom();
-  describe('API', function () {
-    it('Should return a resolved promise', function (done) {
-      return trippyGet(endpoint).then(function (a) {
-        console.log(a);
-      })
-    });
+        try {
+          done()
+        } catch (e) {
+          done(e)
+        }
+
+      });
   });
 });
